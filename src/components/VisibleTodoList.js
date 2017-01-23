@@ -24,11 +24,10 @@ const mapStateToProps = (state, { params }) => ({
   ),
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  onTodoClick: (id) => {
-    dispatch(toggleTodo(id));
-  },
-});
+// Defined a map which defines that when 'onTodoClick'
+// will be called it will trigger dispatch with 'toggleTodo' actions
+// prividing arguments which are passed to 'onTodoClick'
+const mapDispatchToProps = { onTodoClick: toggleTodo };
 
 const VisibleTodoList = withRouter(connect(
   mapStateToProps,
