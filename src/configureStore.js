@@ -2,6 +2,7 @@ import { createStore } from 'redux';
 import todoApp from './reducers';
 
 const addloggingToDispatch = (store) => {
+  /* eslint-disable no-console */
   const rawDispatch = store.dispatch;
   if (!console.group) {
     return rawDispatch;

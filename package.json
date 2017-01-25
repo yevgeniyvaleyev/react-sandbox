@@ -1,14 +1,14 @@
 {
-  "name": "redux-todos-example",
+  "name": "react-redux-playground",
   "version": "0.0.0",
-  "description": "Redux Todos example",
+  "description": "Playground for react and redux",
   "scripts": {
     "start": "babel-node devServer.js",
     "lint": "eslint src"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/gaearon/todos.git"
+    "url": "https://github.com/yevgeniyvaleyev/react-sandbox.git"
   },
   "license": "MIT",
   "dependencies": {
