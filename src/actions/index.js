@@ -1,10 +1,18 @@
 import { v4 } from 'uuid';
+import * as api from '../api';
 
-export const receiveTodos = (filter, response) => ({
+const receiveTodos = (filter, response) => ({
   type: 'RECEIVE_TODOS',
   filter,
   response,
 });
+
+// this 'promise' action is supported becouse
+// we added support for it in 'dispatch'
+export const fetchTodos = (filter) =>
+  api.fetchTodos(filter).then((response) =>
+    receiveTodos(filter, response)
+  );
 
 export const addTodo = (text) => ({
   type: 'ADD_TODO',

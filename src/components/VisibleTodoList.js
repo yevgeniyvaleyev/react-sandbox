@@ -4,7 +4,6 @@ import * as actions from '../actions';
 import TodoList from './TodoList';
 import { getVisibleTodos } from '../reducers';
 import { withRouter } from 'react-router';
-import { fetchTodos } from '../api';
 
 class VisibleTodoList extends React.Component {
   componentDidMount() {
@@ -18,24 +17,24 @@ class VisibleTodoList extends React.Component {
   }
 
   fetchData() {
-    const { filter, receiveTodos } = this.props;
-
-    fetchTodos(filter).then((todos) => {
-      receiveTodos(filter, todos);
-    });
+    const { filter, fetchTodos } = this.props;
+    fetchTodos(filter);
   }
 
   render() {
+    // I don't want to pass fetchTodos to the component
+    // so I extract it
+    const { fetchTodos, ...rest } = this.props; // eslint-disable-line no-unused-vars
     return (
       <TodoList
-        {...this.props}
+        {...rest}
       />
     );
   }
 }
 VisibleTodoList.propTypes = {
   filter: PropTypes.string.isRequired,
-  receiveTodos: PropTypes.func.isRequired,
+  fetchTodos: PropTypes.func.isRequired,
   onTodoClick: PropTypes.func.isRequired,
 };
 
@@ -55,7 +54,7 @@ const mapStateToProps = (state, { params }) => {
 // prividing arguments which are passed to 'onTodoClick'
 const mapDispatchToProps = {
   onTodoClick: actions.toggleTodo,
-  receiveTodos: actions.receiveTodos,
+  fetchTodos: actions.fetchTodos,
 };
 
 VisibleTodoList = withRouter(connect(
