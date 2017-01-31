@@ -1,5 +1,6 @@
 import { v4 } from 'uuid';
 import * as api from '../api';
+import { getIsFetching } from '../reducers';
 
 const receiveTodos = (filter, response) => ({
   type: 'RECEIVE_TODOS',
@@ -14,7 +15,10 @@ export const requestTodos = (filter) => ({
 
 // this 'promise' action is supported becouse
 // we added support for it in 'dispatch'
-export const fetchTodos = (filter) => (dispatch) => {
+export const fetchTodos = (filter) => (dispatch, getState) => {
+  if (getIsFetching(getState(), filter)) {
+    return;
+  }
   dispatch(requestTodos(filter));
   api.fetchTodos(filter).then((response) =>
     dispatch(receiveTodos(filter, response))
