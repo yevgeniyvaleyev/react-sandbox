@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
 import TodoList from './TodoList';
-import { getVisibleTodos } from '../reducers';
+import { getVisibleTodos, getIsFetching } from '../reducers';
 import { withRouter } from 'react-router';
 
 class VisibleTodoList extends React.Component {
@@ -24,9 +24,17 @@ class VisibleTodoList extends React.Component {
   render() {
     // I don't want to pass fetchTodos to the component
     // so I extract it
-    const { fetchTodos, ...rest } = this.props; // eslint-disable-line no-unused-vars
+    const {
+      fetchTodos, // eslint-disable-line no-unused-vars
+      todos,
+      isFetching,
+      ...rest } = this.props;
+    if (isFetching && !todos.length) {
+      return <p>Loading...</p>;
+    }
     return (
       <TodoList
+        todos={todos}
         {...rest}
       />
     );
@@ -34,6 +42,12 @@ class VisibleTodoList extends React.Component {
 }
 VisibleTodoList.propTypes = {
   filter: PropTypes.string.isRequired,
+  todos: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    completed: PropTypes.bool.isRequired,
+    text: PropTypes.string.isRequired,
+  }).isRequired).isRequired,
+  isFetching: PropTypes.bool.isRequired,
   fetchTodos: PropTypes.func.isRequired,
   onTodoClick: PropTypes.func.isRequired,
 };
@@ -45,6 +59,7 @@ const mapStateToProps = (state, { params }) => {
 
   return {
     todos: getVisibleTodos(state, filter),
+    isFetching: getIsFetching(state, filter),
     filter,
   };
 };

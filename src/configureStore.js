@@ -1,7 +1,11 @@
 import { createStore, applyMiddleware } from 'redux';
-import promise from 'redux-promise';
 import createLogger from 'redux-logger';
 import todoApp from './reducers';
+
+const thunk = (store) => (next) => (action) =>
+  (typeof action === 'function') ?
+    action(store.dispatch) :
+    next(action);
 
 // - Here I use applyMiddleware which applies middlewares providing store and
 // previous dispatch to curried function;
@@ -13,7 +17,7 @@ const configureStore = () => {
   if (process.env.NODE_ENV !== 'production') {
     middlewares.push(createLogger());
   }
-  middlewares.push(promise);
+  middlewares.push(thunk);
 
   // second agrument can be persistedState if needed
   return createStore(
