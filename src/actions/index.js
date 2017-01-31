@@ -2,14 +2,20 @@ import { v4 } from 'uuid';
 import * as api from '../api';
 import { getIsFetching } from '../reducers';
 
-const receiveTodos = (filter, response) => ({
-  type: 'RECEIVE_TODOS',
+const fetchTodosSuccess = (filter, response) => ({
+  type: 'FETCH_TODOS_SUCCESS',
   filter,
   response,
 });
 
-export const requestTodos = (filter) => ({
-  type: 'REQUEST_TODOS',
+const fetchTodosFailure = (filter, message) => ({
+  type: 'FETCH_TODOS_FAILURE',
+  filter,
+  message,
+});
+
+export const fetchTodosRequest = (filter) => ({
+  type: 'FETCH_TODOS_REQUEST',
   filter,
 });
 
@@ -17,11 +23,16 @@ export const requestTodos = (filter) => ({
 // we added support for it in 'dispatch'
 export const fetchTodos = (filter) => (dispatch, getState) => {
   if (getIsFetching(getState(), filter)) {
-    return;
+    return Promise.resolve();
   }
-  dispatch(requestTodos(filter));
-  api.fetchTodos(filter).then((response) =>
-    dispatch(receiveTodos(filter, response))
+  dispatch(fetchTodosRequest(filter));
+  return api.fetchTodos(filter).then(
+    (response) => {
+      dispatch(fetchTodosSuccess(filter, response));
+    },
+    (error) => {
+      dispatch(fetchTodosFailure(filter, 'mmm'));
+    }
   );
 };
 
