@@ -31,7 +31,7 @@ export const fetchTodos = (filter) => (dispatch, getState) => {
       dispatch(fetchTodosSuccess(filter, response));
     },
     (error) => {
-      dispatch(fetchTodosFailure(filter, 'mmm'));
+      dispatch(fetchTodosFailure(filter, `${error} !!!!!`));
     }
   );
 };
