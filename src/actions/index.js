@@ -1,11 +1,12 @@
-import { v4 } from 'uuid';
 import * as api from '../api';
 import { getIsFetching } from '../reducers';
+import { normalize } from 'normalizr';
+import * as shema from './shema';
 
 const fetchTodosSuccess = (filter, response) => ({
   type: 'FETCH_TODOS_SUCCESS',
   filter,
-  response,
+  response: normalize(response, shema.arrayOfTodos),
 });
 
 const fetchTodosFailure = (filter, message) => ({
@@ -19,8 +20,19 @@ export const fetchTodosRequest = (filter) => ({
   filter,
 });
 
+const addTodoSuccess = (response) => ({
+  type: 'ADD_TODO_SUCCESS',
+  response: normalize(response, shema.todo),
+});
+
+const addTodoFailure = (message) => ({
+  type: 'ADD_TODO_FAILURE',
+  message,
+});
+
 // this 'promise' action is supported becouse
 // we added support for it in 'dispatch'
+// using thunk
 export const fetchTodos = (filter) => (dispatch, getState) => {
   if (getIsFetching(getState(), filter)) {
     return Promise.resolve();
@@ -31,16 +43,22 @@ export const fetchTodos = (filter) => (dispatch, getState) => {
       dispatch(fetchTodosSuccess(filter, response));
     },
     (error) => {
-      dispatch(fetchTodosFailure(filter, `${error} !!!!!`));
+      const message = error.message || 'Something went wrong!';
+      dispatch(fetchTodosFailure(filter, `${message} !!!!!`));
     }
   );
 };
 
-export const addTodo = (text) => ({
-  type: 'ADD_TODO',
-  id: v4(),
-  text,
-});
+export const addTodo = (text) => (dispatch) => {
+  api.addTodo(text).then(
+    (response) => {
+      dispatch(addTodoSuccess(response));
+    },
+    (error) => {
+      const message = error.message || 'Something went wrong!';
+      dispatch(addTodoFailure(`[Adding] ${message} !!!!!`));
+    });
+};
 
 export const toggleTodo = (id) => ({
   type: 'TOGGLE_TODO',

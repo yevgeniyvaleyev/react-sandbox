@@ -21,7 +21,7 @@ const delay = (ms) =>
 
 export const fetchTodos = (filter) =>
   delay(500).then(() => {
-    if (Math.random() > 0.5) {
+    if (Math.random() > 0.8) {
       throw new Error('Boom!');
     }
     switch (filter) {
@@ -34,4 +34,13 @@ export const fetchTodos = (filter) =>
       default:
         throw new Error(`Unknown filter: ${filter}`);
     }
+  });
+
+export const addTodo = (text) =>
+  delay(500).then(() => {
+    return {
+      id: v4(),
+      text,
+      completed: false,
+    };
   });

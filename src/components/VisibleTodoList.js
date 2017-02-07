@@ -34,13 +34,15 @@ class VisibleTodoList extends React.Component {
     if (isFetching && !todos.length) {
       return <p>Loading...</p>;
     }
+    // renders an error component
+    // if fetching had a problem
     if (errorMessage && !todos.length) {
       return (
         <FetchError
           message={errorMessage}
           onRetry={() => this.fetchData()}
         />
-      )
+      );
     }
     return (
       <TodoList
