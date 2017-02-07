@@ -30,6 +30,16 @@ const addTodoFailure = (message) => ({
   message,
 });
 
+const toggleTodoSuccess = (response) => ({
+  type: 'TOGGLE_TODO_SUCCESS',
+  response: normalize(response, shema.todo),
+});
+
+const toggleTodoFailure = (message) => ({
+  type: 'TOGGLE_TODO_FAILURE',
+  message,
+});
+
 // this 'promise' action is supported becouse
 // we added support for it in 'dispatch'
 // using thunk
@@ -49,6 +59,17 @@ export const fetchTodos = (filter) => (dispatch, getState) => {
   );
 };
 
+export const toggleTodo = (id) => (dispatch) => {
+  api.toggleTodo(id).then(
+    (response) => {
+      dispatch(toggleTodoSuccess(response));
+    },
+    (error) => {
+      const message = error.message || 'Something went wrong!';
+      dispatch(toggleTodoFailure(`[Toggle] ${message} !!!!!`));
+    });
+};
+
 export const addTodo = (text) => (dispatch) => {
   api.addTodo(text).then(
     (response) => {
@@ -59,8 +80,3 @@ export const addTodo = (text) => (dispatch) => {
       dispatch(addTodoFailure(`[Adding] ${message} !!!!!`));
     });
 };
-
-export const toggleTodo = (id) => ({
-  type: 'TOGGLE_TODO',
-  id,
-});
